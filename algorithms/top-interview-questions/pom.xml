@@ -10,10 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>top-interview-questions</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>Four-Sum-II</module>
-    </modules>
 
 
 </project>

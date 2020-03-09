@@ -34,7 +34,7 @@ The two tuples are:
 2. (1, 1, 0, 0) -> A[1] + B[1] + C[0] + D[0] = 2 + (-1) + (-1) + 0 = 0
 
  */
-class SolutionTest {
+class Four_Sum_II_Test {
 
     static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
