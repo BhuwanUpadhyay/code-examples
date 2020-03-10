@@ -10,6 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>database-read-replicas</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>employees-query</module>
+        <module>employees-command</module>
+    </modules>
 
 
 </project>
