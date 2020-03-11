@@ -1,5 +1,6 @@
 package io.github.bhuwanupadhyay.highlyscalabledatabasedesigns;
 
+import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.application.EmployeeHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

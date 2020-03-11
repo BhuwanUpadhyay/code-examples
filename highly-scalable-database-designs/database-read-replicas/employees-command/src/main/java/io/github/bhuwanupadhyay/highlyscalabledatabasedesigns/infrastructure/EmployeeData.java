@@ -1,7 +1,6 @@
 package io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.infrastructure;
 
 
-import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain;
 import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain.Employee;
 
 import static io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain.*;
