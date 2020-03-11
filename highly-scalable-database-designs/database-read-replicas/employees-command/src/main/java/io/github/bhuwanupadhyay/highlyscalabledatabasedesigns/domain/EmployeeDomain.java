@@ -7,12 +7,6 @@ public interface EmployeeDomain {
         RESIGNED
     }
 
-    record UpdateEmployeeCommand(String name) {
-    }
-
-    record DeleteEmployeeCommand(String name) {
-    }
-
     record Employee(EmployeeId employeeId, EmployeeName name, EmployeeStatus status) {
     }
 
