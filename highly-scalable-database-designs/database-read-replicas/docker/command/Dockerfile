@@ -1,9 +1,5 @@
-FROM postgres:9.6.17-alpine
-ENV GOSU_VERSION 1.10
-ADD ./gosu /usr/bin/
-RUN chmod +x /usr/bin/gosu
-RUN apk add --update iputils
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["gosu", "postgres", "postgres"]
+FROM openjdk:14-jdk-alpine
+VOLUME /tmp
+ARG JAR_FILE
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]

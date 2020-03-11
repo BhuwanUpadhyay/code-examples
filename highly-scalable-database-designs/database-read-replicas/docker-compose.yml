@@ -1,0 +1,58 @@
+version: "3"
+services:
+  pg_primary:
+    build:
+      context: docker/postgres/primary
+    ports:
+      - 5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_REPLICATION_USER=repl_user
+      - POSTGRES_REPLICATION_PASSWORD=repl_password
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=employees_db
+    networks:
+      default:
+        aliases:
+          - replicas_cluster
+  pg_replica:
+    build:
+      context: docker/postgres/replica
+    ports:
+      - 5432
+    depends_on:
+      - pg_primary
+    environment:
+      - POSTGRES_REPLICATION_HOST=pg_primary
+      - POSTGRES_REPLICATION_PORT=5432
+      - POSTGRES_REPLICATION_USER=repl_user
+      - POSTGRES_REPLICATION_PASSWORD=repl_password
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=employees_db
+    networks:
+      default:
+        aliases:
+          - replicas_cluster
+  employees_command:
+    build:
+      context: docker/command
+      args:
+        JAR_FILE: employees-command.jar
+    ports:
+      - 8080
+    depends_on:
+      - pg_primary
+  employees_query:
+    build:
+      context: docker/query
+      args:
+        JAR_FILE: employees-query.jar
+    ports:
+      - 8080
+    depends_on:
+      - pg_replica
+volumes:
+  pg_data:
