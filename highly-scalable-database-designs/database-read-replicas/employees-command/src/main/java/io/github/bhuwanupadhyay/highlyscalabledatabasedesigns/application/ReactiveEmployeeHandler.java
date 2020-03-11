@@ -1,6 +1,9 @@
 package io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.application;
 
-import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain.*;
+import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain.Employee;
+import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain.EmployeeId;
+import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain.EmployeeName;
+import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain.EmployeeStatus;
 import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +40,9 @@ class ReactiveEmployeeHandler implements EmployeeHandler {
 
         return request.bodyToMono(EmployeeRequest.class)
                 .map(command -> {
-                    Employee newEmployee = new Employee(null, new EmployeeName(command.name()));
+                    Employee newEmployee = new Employee(null, new EmployeeName(command.name()), EmployeeStatus.JOINED);
                     Employee savedEmployee = employeeRepository.save(newEmployee);
-                    return new EmployeeResource(savedEmployee.employeeId().id(), savedEmployee.name().name());
+                    return new EmployeeResource(savedEmployee.employeeId().id(), savedEmployee.name().name(), savedEmployee.status().name());
                 }).flatMap(resource -> ok().bodyValue(withSuccess(resource)));
 
     }
@@ -52,9 +55,11 @@ class ReactiveEmployeeHandler implements EmployeeHandler {
 
         return employeeRepository.find(new EmployeeId(id))
                 .map(employee -> request.bodyToMono(EmployeeRequest.class)
-                        .doOnNext(r -> employee.update(new UpdateEmployeeCommand(r.name())))
-                        .map(i -> employeeRepository.save(employee))
-                        .map(e -> new EmployeeResource(e.employeeId().id(), e.name().name()))
+                        .map(command -> {
+                            Employee newEmployee = new Employee(employee.employeeId(), new EmployeeName(command.name()), employee.status());
+                            Employee savedEmployee = employeeRepository.save(newEmployee);
+                            return new EmployeeResource(savedEmployee.employeeId().id(), savedEmployee.name().name(), savedEmployee.status().name());
+                        })
                         .flatMap(resource -> ok().bodyValue(withSuccess(resource))))
                 .orElseGet(employeeNotFound(id));
     }
@@ -67,11 +72,12 @@ class ReactiveEmployeeHandler implements EmployeeHandler {
         LOG.debug("delete employee id: {}", id);
 
         return employeeRepository.find(new EmployeeId(id))
-                .map(employee -> request.bodyToMono(EmployeeRequest.class)
-                        .doOnNext(r -> employee.delete(new DeleteEmployeeCommand(r.name())))
-                        .map(i -> employeeRepository.save(employee))
-                        .map(e -> new EmployeeResource(e.employeeId().id(), e.name().name()))
-                        .flatMap(resource -> ok().bodyValue(withSuccess(resource))))
+                .map(employee -> {
+                    Employee newEmployee = new Employee(employee.employeeId(), employee.name(), EmployeeStatus.RESIGNED);
+                    Employee savedEmployee = employeeRepository.save(newEmployee);
+                    return new EmployeeResource(savedEmployee.employeeId().id(), savedEmployee.name().name(), savedEmployee.status().name());
+                })
+                .map(resource -> ok().bodyValue(withSuccess(resource)))
                 .orElseGet(employeeNotFound(id));
     }
 

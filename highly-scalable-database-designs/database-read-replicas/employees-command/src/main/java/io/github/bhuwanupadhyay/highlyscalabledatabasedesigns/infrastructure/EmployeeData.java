@@ -14,9 +14,10 @@ class EmployeeData {
 
     public EmployeeData(Long id,
                         String employeeId,
-                        String employeeName) {
+                        String employeeName,
+                        String employeeStatus) {
         this.id = id;
-        this.employee = new Employee(new EmployeeId(employeeId), new EmployeeName(employeeName));
+        this.employee = new Employee(new EmployeeId(employeeId), new EmployeeName(employeeName), EmployeeStatus.valueOf(employeeStatus));
     }
 
     public Employee getEmployee() {

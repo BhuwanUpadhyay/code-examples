@@ -4,7 +4,6 @@ import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDom
 import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain.EmployeeId;
 import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -40,13 +39,13 @@ class JdbcEmployeeRepository implements EmployeeRepository {
 
                 employeeId = new EmployeeId(UUID.randomUUID().toString());
 
-                jdbc.update("INSERT INTO employee (emp_id, name) values (?, ?)", employeeId.id(), employee.name().name());
+                jdbc.update("INSERT INTO employee (emp_id, name, status) values (?, ?, ?)", employeeId.id(), employee.name().name(), employee.status().name());
 
             } else {
 
                 employeeId = optional.get();
 
-                jdbc.update("UPDATE employee e SET e.name = ? where e.emp_id = ?", employee.name().name(), employeeId.id());
+                jdbc.update("UPDATE employee e SET e.name = ?, e.status = ? where e.emp_id = ?", employee.name().name(), employee.status().name(), employeeId.id());
             }
 
             return findByRef(employeeId).map(EmployeeData::getEmployee).get();
@@ -58,7 +57,7 @@ class JdbcEmployeeRepository implements EmployeeRepository {
 
     private Optional<EmployeeData> findByRef(EmployeeId employeeId) {
         return jdbc.query(
-                "SELECT e.id, e.emp_id, e.name FROM employee e where e.emp_id = ?",
+                "SELECT e.id, e.emp_id, e.name, e.status FROM employee e where e.emp_id = ?",
                 new Object[]{employeeId.id()},
                 rs -> {
                     if (rs.next()) {
@@ -66,7 +65,8 @@ class JdbcEmployeeRepository implements EmployeeRepository {
                                 new EmployeeData(
                                         rs.getLong("id"),
                                         rs.getString("emp_id"),
-                                        rs.getString("name"))
+                                        rs.getString("name"),
+                                        rs.getString("status"))
                         );
                     } else {
                         return Optional.empty();

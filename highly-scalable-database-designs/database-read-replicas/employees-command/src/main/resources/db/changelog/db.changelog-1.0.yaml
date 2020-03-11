@@ -19,4 +19,7 @@ databaseChangeLog:
               - column:
                   name: name
                   type: VARCHAR(255)
+              - column:
+                  name: status
+                  type: VARCHAR(255)
             tableName: employee
