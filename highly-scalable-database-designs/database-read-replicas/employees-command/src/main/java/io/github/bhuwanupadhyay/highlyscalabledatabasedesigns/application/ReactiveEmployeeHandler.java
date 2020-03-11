@@ -40,7 +40,7 @@ class ReactiveEmployeeHandler implements EmployeeHandler {
                     Employee newEmployee = new Employee(null, new EmployeeName(command.name()));
                     Employee savedEmployee = employeeRepository.save(newEmployee);
                     return new EmployeeResource(savedEmployee.employeeId().id(), savedEmployee.name().name());
-                }).flatMap(resource -> ok().bodyValue(resource));
+                }).flatMap(resource -> ok().bodyValue(withSuccess(resource)));
 
     }
 

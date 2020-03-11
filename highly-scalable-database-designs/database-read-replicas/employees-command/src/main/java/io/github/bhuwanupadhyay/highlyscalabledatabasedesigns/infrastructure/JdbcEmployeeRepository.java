@@ -22,7 +22,7 @@ class JdbcEmployeeRepository implements EmployeeRepository {
     @Override
     public Optional<Employee> find(EmployeeId employeeId) {
         try {
-            return Optional.ofNullable(findByRef(employeeId)).map(EmployeeData::getEmployee);
+            return findByRef(employeeId).map(EmployeeData::getEmployee);
         } catch (Exception ex) {
             throw new EmployeeDataException(ex);
         }
@@ -40,7 +40,7 @@ class JdbcEmployeeRepository implements EmployeeRepository {
 
                 employeeId = new EmployeeId(UUID.randomUUID().toString());
 
-                jdbc.update("INSERT INTO employee e (e.emp_id, e.name) values (?, ?)", employeeId.id(), employee.name().name());
+                jdbc.update("INSERT INTO employee (emp_id, name) values (?, ?)", employeeId.id(), employee.name().name());
 
             } else {
 
@@ -49,18 +49,29 @@ class JdbcEmployeeRepository implements EmployeeRepository {
                 jdbc.update("UPDATE employee e SET e.name = ? where e.emp_id = ?", employee.name().name(), employeeId.id());
             }
 
-            return findByRef(employeeId).getEmployee();
+            return findByRef(employeeId).map(EmployeeData::getEmployee).get();
 
         } catch (Exception ex) {
             throw new EmployeeDataException(ex);
         }
     }
 
-    private EmployeeData findByRef(EmployeeId employeeId) {
+    private Optional<EmployeeData> findByRef(EmployeeId employeeId) {
         return jdbc.query(
-                "SELECT * FROM employee e where e.emp_id = ?",
+                "SELECT e.id, e.emp_id, e.name FROM employee e where e.emp_id = ?",
                 new Object[]{employeeId.id()},
-                (ResultSetExtractor<EmployeeData>) rs -> new EmployeeData()
+                rs -> {
+                    if (rs.next()) {
+                        return Optional.of(
+                                new EmployeeData(
+                                        rs.getLong("id"),
+                                        rs.getString("emp_id"),
+                                        rs.getString("name"))
+                        );
+                    } else {
+                        return Optional.empty();
+                    }
+                }
         );
     }
 
