@@ -1,0 +1,5 @@
+<insert tableName="employees">
+    <column name="id" valueNumeric="1"/>
+    <column name="name" value="book_01_a_01"/>
+    <column name="author" valueNumeric="01"/>
+</insert>
