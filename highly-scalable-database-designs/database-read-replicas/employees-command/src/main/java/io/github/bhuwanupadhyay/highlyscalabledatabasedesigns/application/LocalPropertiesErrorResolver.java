@@ -19,7 +19,7 @@ public class LocalPropertiesErrorResolver implements ErrorResolver {
 
     public LocalPropertiesErrorResolver(ResourceLoader resourceLoader) throws IOException {
         this.resourceLoader = resourceLoader;
-        Resource resource = this.resourceLoader.getResource("classpath:en.properties");
+        Resource resource = this.resourceLoader.getResource("classpath:i18n/en.properties");
         properties.load(resource.getInputStream());
     }
 
