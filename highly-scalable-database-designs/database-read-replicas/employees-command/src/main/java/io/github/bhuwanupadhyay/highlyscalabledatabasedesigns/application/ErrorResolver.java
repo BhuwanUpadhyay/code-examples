@@ -6,7 +6,7 @@ import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.application.Employ
 public interface ErrorResolver {
 
     ErrorResource resolve(String errorId, Object... params);
-    
+
     class NoTranslationFoundException extends RuntimeException {
 
         private final String errorId;

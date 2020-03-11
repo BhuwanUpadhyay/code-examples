@@ -4,6 +4,7 @@ import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.application.Employ
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +27,8 @@ public class LocalPropertiesErrorResolver implements ErrorResolver {
     @Override
     public ErrorResource resolve(String errorId, Object... params) {
         String value = (String) properties.get(errorId);
+        if (StringUtils.isEmpty(value))
+            throw new NoTranslationFoundException(errorId);
         return new ErrorResource(errorId, List.of(new MessageResource("en", String.format(value, params))));
     }
 
