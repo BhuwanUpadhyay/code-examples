@@ -25,7 +25,7 @@ public interface EmployeeHandler {
 
     record EmployeeResource(@JsonProperty("employeeId")String employeeId,
                             @JsonProperty("name")String name,
-                            @JsonProperty("status")String staus) {
+                            @JsonProperty("status")String status) {
     }
 
     record MessageResource(@JsonProperty("lang")String lang,
