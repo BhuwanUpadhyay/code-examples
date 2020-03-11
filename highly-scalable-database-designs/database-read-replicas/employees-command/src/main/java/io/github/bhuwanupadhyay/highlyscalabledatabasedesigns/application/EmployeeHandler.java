@@ -1,5 +1,6 @@
 package io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.application;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -19,19 +20,24 @@ public interface EmployeeHandler {
 
     Mono<ServerResponse> deleteEmployee(ServerRequest request);
 
-    record EmployeeRequest(String name) {
+    record EmployeeRequest(@JsonProperty("name")String name) {
     }
 
-    record EmployeeResource(String employeeId, String name) {
+    record EmployeeResource(@JsonProperty("employeeId")String employeeId,
+                            @JsonProperty("name")String name) {
     }
 
-    record MessageResource(String lang, String value) {
+    record MessageResource(@JsonProperty("lang")String lang,
+                           @JsonProperty("value")String value) {
     }
 
-    record ErrorResource(String errorId, List<MessageResource>errors) {
+    record ErrorResource(@JsonProperty("errorId")String errorId,
+                         @JsonProperty("translations")List<MessageResource>translations) {
     }
 
-    record ServerResource<T>(int statusCode, T resource, List<ErrorResource>errors) {
+    record ServerResource<T>(@JsonProperty("statusCode")int statusCode,
+                             @JsonProperty("resource")T resource,
+                             @JsonProperty("errors")List<ErrorResource>errors) {
 
         public static <E> ServerResource<E> withSuccess(E resource) {
             return new ServerResource<>(HttpStatus.OK.value(), resource, new ArrayList<>());
