@@ -45,6 +45,10 @@ services:
       - 8080
     depends_on:
       - pg_primary
+    networks:
+      default:
+        aliases:
+          - replicas_cluster
   employees_query:
     build:
       context: docker/query
@@ -54,5 +58,9 @@ services:
       - 8080
     depends_on:
       - pg_replica
+    networks:
+      default:
+        aliases:
+          - replicas_cluster
 volumes:
   pg_data:
