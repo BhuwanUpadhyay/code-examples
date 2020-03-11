@@ -15,7 +15,6 @@ import static io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.application
         classes = App.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@ActiveProfiles({"jdbc"})
 class JdbcAppTests {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")

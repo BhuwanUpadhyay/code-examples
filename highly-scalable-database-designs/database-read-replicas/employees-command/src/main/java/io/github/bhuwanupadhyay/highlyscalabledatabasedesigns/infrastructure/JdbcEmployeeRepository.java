@@ -3,7 +3,6 @@ package io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.infrastructure;
 import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain.Employee;
 import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeDomain.EmployeeId;
 import io.github.bhuwanupadhyay.highlyscalabledatabasedesigns.domain.EmployeeRepository;
-import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
@@ -12,7 +11,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-@Profile("jdbc")
 class JdbcEmployeeRepository implements EmployeeRepository {
 
     private final JdbcTemplate jdbc;
@@ -42,13 +40,13 @@ class JdbcEmployeeRepository implements EmployeeRepository {
 
                 employeeId = new EmployeeId(UUID.randomUUID().toString());
 
-                jdbc.update("INSERT employees e () values ()");
+                jdbc.update("INSERT INTO employee e (e.emp_id, e.name) values (?, ?)", employeeId.id(), employee.name().name());
 
             } else {
 
                 employeeId = optional.get();
 
-                jdbc.update("UPDATE employees e () values ()  where e.id = ?");
+                jdbc.update("UPDATE employee e SET e.name = ? where e.emp_id = ?", employee.name().name(), employeeId.id());
             }
 
             return findByRef(employeeId).getEmployee();
@@ -60,7 +58,7 @@ class JdbcEmployeeRepository implements EmployeeRepository {
 
     private EmployeeData findByRef(EmployeeId employeeId) {
         return jdbc.query(
-                "SELECT * FROM employees e where e.id = ?",
+                "SELECT * FROM employee e where e.emp_id = ?",
                 new Object[]{employeeId.id()},
                 (ResultSetExtractor<EmployeeData>) rs -> new EmployeeData()
         );
