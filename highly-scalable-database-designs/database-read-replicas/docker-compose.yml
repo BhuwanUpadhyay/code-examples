@@ -47,8 +47,8 @@ services:
     environment:
       - spring.datasource.driver-class-name=org.postgresql.Driver
       - spring.datasource.url=jdbc:postgresql://pg_primary:5432/employees_db
-      - spring.datasource.username=repl_user
-      - spring.datasource.password=repl_password
+      - spring.datasource.username=user
+      - spring.datasource.password=password
     depends_on:
       - pg_primary
     links:
@@ -61,9 +61,10 @@ services:
     environment:
       - spring.datasource.driver-class-name=org.postgresql.Driver
       - spring.datasource.url=jdbc:postgresql://pg_replica:5432/employees_db
-      - spring.datasource.username=repl_user
-      - spring.datasource.password=repl_password
+      - spring.datasource.username=user
+      - spring.datasource.password=password
     depends_on:
       - pg_replica
+      - pg_primary
     links:
       - pg_replica
