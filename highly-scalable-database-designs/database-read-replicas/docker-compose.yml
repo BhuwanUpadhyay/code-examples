@@ -20,21 +20,21 @@ services:
     ports:
       - 5432
     environment:
-      - POSTGRES_REPLICATION_USER=repl_user
-      - POSTGRES_REPLICATION_PASSWORD=repl_password
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=employees_db
+      - POSTGRES_REPLICATION_USER=repl_user
+      - POSTGRES_REPLICATION_PASSWORD=repl_password
       - POSTGRES_REPLICATION_LOGIN_CONNECTION_LIMIT=100
   pg_replica:
     image: bhuwanupadhyay/postgres-stream-replication-replica
     ports:
       - 5432
     environment:
-      - POSTGRES_REPLICATION_USER=repl_user
-      - POSTGRES_REPLICATION_PASSWORD=repl_password
       - POSTGRES_REPLICATION_PRIMARY_HOST=pg_primary
       - POSTGRES_REPLICATION_PRIMARY_PORT=5432
+      - POSTGRES_REPLICATION_USER=repl_user
+      - POSTGRES_REPLICATION_PASSWORD=repl_password
     depends_on:
       - pg_primary
     links:
@@ -60,10 +60,10 @@ services:
       - 8080
     environment:
       - spring.datasource.driver-class-name=org.postgresql.Driver
-      - spring.datasource.url=jdbc:postgresql://replica_lb:5432/employees_db
+      - spring.datasource.url=jdbc:postgresql://pg_replica:5432/employees_db
       - spring.datasource.username=repl_user
       - spring.datasource.password=repl_password
     depends_on:
-      - replica_lb
+      - pg_replica
     links:
-      - replica_lb
+      - pg_replica
