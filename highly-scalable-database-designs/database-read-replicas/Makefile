@@ -1,8 +1,9 @@
-deploy:
+install:
 	mvn clean install && \
 	cp -R employees-command/target/employees-command.jar docker && \
-	cp -R employees-query/target/employees-query.jar docker && \
-	docker-compose build --no-cache && docker-compose up -d
+	cp -R employees-query/target/employees-query.jar docker
+deploy:
+	docker-compose build --no-cache && docker-compose up
 scale:
 	docker-compose scale pg_primary=1 pg_replica=3 employees_command=1 employees_query=3
 ls:

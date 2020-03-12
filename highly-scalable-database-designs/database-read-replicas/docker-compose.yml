@@ -26,8 +26,6 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=employees_db
       - POSTGRES_REPLICATION_LOGIN_CONNECTION_LIMIT=100
-    depends_on:
-      - consul
   pg_replica:
     image: bhuwanupadhyay/postgres-stream-replication-replica
     ports:
@@ -38,34 +36,34 @@ services:
       - POSTGRES_REPLICATION_PRIMARY_HOST=pg_primary
       - POSTGRES_REPLICATION_PRIMARY_PORT=5432
     depends_on:
-      - consul
+      - pg_primary
     links:
       - pg_primary
   employees_command:
     build:
-      context: docker
-      args:
-        JAR_FILE: employees-command.jar
+      context: employees-command
     ports:
       - 8080
     environment:
       - spring.datasource.driver-class-name=org.postgresql.Driver
-      - spring.datasource.url=jdbc:postgresql://consul:/employees_db
+      - spring.datasource.url=jdbc:postgresql://pg_primary:5432/employees_db
       - spring.datasource.username=repl_user
       - spring.datasource.password=repl_password
     depends_on:
-      - consul
+      - pg_primary
+    links:
+      - pg_primary
   employees_query:
     build:
-      context: docker
-      args:
-        JAR_FILE: employees-query.jar
+      context: employees-query
     ports:
       - 8080
     environment:
       - spring.datasource.driver-class-name=org.postgresql.Driver
-      - spring.datasource.url=jdbc:postgresql://localhost/test
+      - spring.datasource.url=jdbc:postgresql://replica_lb:5432/employees_db
       - spring.datasource.username=repl_user
       - spring.datasource.password=repl_password
     depends_on:
-      - consul
+      - replica_lb
+    links:
+      - replica_lb
